@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đấu Trường Tri Thức - Lịch Sử Tây Ninh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Bar Navigation -->
+    <header class="top-bar">
+        <div class="logo">
+            <i class="fa-solid fa-monument"></i> ĐẤU TRƯỜNG TRI THỨC - LỊCH SỬ TÂY NINH
+        </div>
+        <div id="user-info" class="user-info hidden">
+            <span id="display-name">Thí sinh</span>
+            <button class="btn btn-outline" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Thoát</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 1. GIAO DIỆN ĐĂNG NHẬP -->
+        <section id="screen-login" class="card active">
+            <h1 class="text-center title">CHÀO MỪNG ĐẾN VỚI ĐẤU TRƯỜNG TRI THỨC</h1>
+            <p class="subtitle text-center">Hành trình khám phá Lịch sử & Hào khí Tây Ninh</p>
+            
+            <form id="form-login" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username"><i class="fa-solid fa-user"></i> Tên người dùng / Thí sinh:</label>
+                    <input type="text" id="username" placeholder="Nhập tên của bạn..." required>
+                </div>
+                <div class="form-group">
+                    <label for="role"><i class="fa-solid fa-user-gear"></i> Vai trò đăng nhập:</label>
+                    <select id="role">
+                        <option value="contestant">Thí sinh thi đấu</option>
+                        <option value="mc">MC (Người dẫn chương trình)</option>
+                        <option value="admin">Quản trị viên (Admin)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket"></i> VÀO ĐẤU TRƯỜNG</button>
+            </form>
+        </section>
+
+        <!-- 2. GIAO DIỆN THÍ SINH (LỰA CHỌN VÒNG THI) -->
+        <section id="screen-rounds" class="card hidden">
+            <h2 class="text-center">CÁC VÒNG THI LỊCH SỬ TÂY NINH</h2>
+            <div class="score-board">
+                <div>Tổng điểm hiện tại: <span id="total-score" class="highlight">0</span> điểm</div>
+            </div>
+            <div class="rounds-grid">
+                <div class="round-card" onclick="startQuiz(1)">
+                    <div class="round-icon"><i class="fa-solid fa-compass"></i></div>
+                    <h3>Vòng 1: Khởi Động</h3>
+                    <p>Khai phá miền đất Tây Ninh & Danh thắng</p>
+                    <span class="badge">10 Câu hỏi</span>
+                </div>
+                <div class="round-card" onclick="startQuiz(2)">
+                    <div class="round-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Vòng 2: Vượt Chướng Chướng Vực</h3>
+                    <p>Tây Ninh thời kỳ kháng Pháp & Chống Mỹ</p>
+                    <span class="badge">10 Câu hỏi</span>
+                </div>
+                <div class="round-card" onclick="startQuiz(3)">
+                    <div class="round-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Vòng 3: Tăng Tốc</h3>
+                    <p>Căn cứ Trung ương Cục Miền Nam & Di tích</p>
+                    <span class="badge">10 Câu hỏi</span>
+                </div>
+                <div class="round-card" onclick="startQuiz(4)">
+                    <div class="round-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <h3>Vòng 4: Về Đích</h3>
+                    <p>Tây Ninh Đổi mới, Phát triển & Di sản</p>
+                    <span class="badge">10 Câu hỏi</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. GIAO DIỆN TRẮC NGHIỆM -->
+        <section id="screen-quiz" class="card hidden">
+            <div class="quiz-header">
+                <div>
+                    <span id="quiz-round-title" class="quiz-round-title">Vòng 1</span>
+                    <span id="quiz-progress">Câu 1/10</span>
+                </div>
+                <div class="timer" id="timer">15s</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="question-container">
+                <h3 id="question-text">Nội dung câu hỏi sẽ hiển thị ở đây?</h3>
+                <div id="options-container" class="options-grid">
+                    <!-- Dynamic Options -->
+                </div>
+            </div>
+
+            <div class="quiz-footer">
+                <button id="btn-next" class="btn btn-secondary hidden" onclick="nextQuestion()">Câu tiếp theo <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <!-- 4. GIAO DIỆN KẾT QUẢ VÒNG THI -->
+        <section id="screen-result" class="card hidden text-center">
+            <div class="trophy-icon"><i class="fa-solid fa-award"></i></div>
+            <h2>HOÀN THÀNH VÒNG THI!</h2>
+            <div class="result-details">
+                <p>Số câu trả lời đúng: <strong id="result-correct">0/10</strong></p>
+                <p>Điểm đạt được: <strong id="result-score" class="highlight">0</strong> điểm</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="showRounds()"><i class="fa-solid fa-list"></i> Chọn Vòng Khác</button>
+            </div>
+        </section>
+
+        <!-- 5. GIAO DIỆN MC (ĐIỀU KHIỂN & ĐÁP ÁN) -->
+        <section id="screen-mc" class="card hidden">
+            <h2><i class="fa-solid fa-bullhorn"></i> GIAO DIỆN ĐIỀU KHIỂN DÀNH CHO MC</h2>
+            <p>Chọn vòng thi để xem câu hỏi, đáp án chi tiết và dẫn dắt GameShow:</p>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="loadMCQuestions(1)">Vòng 1</button>
+                <button class="tab-btn" onclick="loadMCQuestions(2)">Vòng 2</button>
+                <button class="tab-btn" onclick="loadMCQuestions(3)">Vòng 3</button>
+                <button class="tab-btn" onclick="loadMCQuestions(4)">Vòng 4</button>
+            </div>
+            <div id="mc-questions-list" class="mc-list">
+                <!-- Data inserted via JS -->
+            </div>
+        </section>
+
+        <!-- 6. GIAO DIỆN ADMIN -->
+        <section id="screen-admin" class="card hidden">
+            <h2><i class="fa-solid fa-user-shield"></i> HỆ THỐNG QUẢN TRỊ (ADMIN)</h2>
+            <div class="admin-grid">
+                <div class="admin-panel">
+                    <h3>Thống kê tổng quan</h3>
+                    <div class="stat-box">
+                        <p>Tổng số vòng: <strong>4 vòng</strong></p>
+                        <p>Tổng số câu hỏi: <strong>40 câu (10 câu/vòng)</strong></p>
+                        <p>Chủ đề: <strong>Lịch Sử & Văn Hoá Tây Ninh</strong></p>
+                    </div>
+                </div>
+                <div class="admin-panel">
+                    <h3>Cấu hình hệ thống</h3>
+                    <div class="form-group">
+                        <label>Thời gian mỗi câu hỏi (Giây):</label>
+                        <input type="number" id="cfg-timer" value="15" min="5" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Điểm cho mỗi câu đúng:</label>
+                        <input type="number" id="cfg-points" value="10" min="1">
+                    </div>
+                    <button class="btn btn-success" onclick="saveAdminConfig()"><i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/questions.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
